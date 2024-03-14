@@ -21,9 +21,8 @@ public class App {
 
          //Unique Characters Count: Calculate the count of unique characters in a string.
         String name = "Sreeja";
+        name.chars().mapToObj(i->(char)i).collect(Collectors.groupingBy(Function.identity(),Collectors.counting())).entrySet().stream().filter(e->e.getValue()==1).forEach(e-> System.out.println(e.getKey()));
         System.out.println(name.chars().distinct().mapToObj(i -> (char) i).toList());
-        Map<Integer, Long> integerLongMap = name.chars().boxed().collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
-        System.out.println(integerLongMap.entrySet().stream().filter(entry -> entry.getValue() == 1).map(Map.Entry::getKey).mapToInt(i -> i).mapToObj(i -> (char) i));
 
         //Average of List of Doubles: Compute the average of a list of doubles.
         // List<Double> doubleList = DoubleStream.generate(()->)
@@ -31,17 +30,19 @@ public class App {
         System.out.println(doublenum);
 
         //Grouping by Length: Group a list of strings by their lengths.
+        stringList.stream().collect(Collectors.groupingBy(String::length)).entrySet().stream().forEach(e-> System.out.println(e));
+
         Map<String, Long> lengthMap = stringList.stream().collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
-        System.out.println(lengthMap);
+        System.out.println(lengthMap); // groupby(function,Collector)
         Map<Integer, List<String>> lengthMap1 = stringList.stream().collect(Collectors.groupingBy(String::length));
-        System.out.println(lengthMap1);
-        System.out.println(stringList.stream().collect(Collectors.groupingBy(String::length)));
+        System.out.println(lengthMap1);//group(function)
+
 
 
         //Partitioning Integers: Partition a list of integers into two groups: odd and even numbers.
         List<Integer> numList = new ArrayList<>(IntStream.range(1, 10).boxed().toList());
         numList.add(4);
-        Map<Boolean, List<Integer>> evenorodd1 = numList.stream().collect(Collectors.partitioningBy(i -> (i % 2 == 0)));
+        Map<Boolean, List<Integer>> evenorodd1 = numList.stream().collect(Collectors.partitioningBy(i -> (i % 2 == 0))); //true or false
         Map<String, List<Integer>> evenorodd2 = numList.stream().collect(Collectors.groupingBy(i -> i % 2 == 0 ? "even" : "odd"));
         System.out.println(evenorodd2);
         System.out.println(evenorodd1);
@@ -58,34 +59,39 @@ public class App {
         //Square of Even Numbers: Find the squares of all even numbers from a list of integers.
         System.out.println(numList.stream().filter(i -> i % 2 == 0).map(i -> i * i).toList());
 
+
         //Sorting Strings by Length: Sort a list of strings by their lengths.
-        Comparator<String> lenComparator = Comparator.comparing(String::length).thenComparing(Comparator.naturalOrder());
-        System.out.println(stringList.stream().sorted(lenComparator).toList());
+        stringList.stream().sorted(Comparator.comparing(String::length)).forEach(s-> System.out.println(s));
+
 
         // largest string
         String lavs = "wellcome to gava";
         System.out.println(Arrays.stream(lavs.split(" ")).collect(Collectors.groupingBy(Function.identity(), Collectors.counting())).entrySet().stream().map(entry -> entry.getKey()).max(Comparator.comparing(String::length)));
+        Arrays.stream(lavs.split(" ")).reduce((s1,s2)->s1.length()>s2.length() ? s1 :s2).ifPresent((st)-> System.out.println(st));
 
-
-        System.out.println("====================================================>");
 
         //Max and Min of List: Find the maximum and minimum values from a list of integers.
-        // Map<String ,Integer> minMax= numList.stream().collect(Collectors.groupingBy(numList.stream().mapToInt(i->i).min()?"min":"max"));
+        numList.stream().mapToInt(i->i).min();
+        numList.stream().mapToInt(i->i).max();
+        //for primitive types direct min() , max();
+        //for object types min(),max() takes comparator;
 
 
 //        Mapping Object to Another Object: Map a list of Person objects to a list of their respective ages.
-//            Filtering with Predicate: Use a custom predicate to filter a list of elements.
+        List<Person> l3 =new ArrayList<>();
+        l3.add(new Person("sree",21,10000));
+        l3.add(new Person("abc",23,6789));
+        l3.add(new Person("abcd",20,63484));
+        l3.stream().map(Person::getAge).forEach((age)-> System.out.println(age));
 
 
-//        FlatMapping Nested Lists: Flatten a list of lists into a single list.
-//            Creating Infinite Streams: Generate an infinite stream of even numbers.
 
-//        Finding Median of Numbers: Find the median of a list of numbers.
-//        Check for Divisibility: Check if all elements in a list are divisible by a given number.
-//            Peeking into Stream Elements: Peek into a stream and print elements while performing an operation.
+        //        FlatMapping Nested Lists: Flatten a list of lists into a single list.
+        List<List<Integer>> lll= List.of(List.of(1,2),List.of(5,3));
+        System.out.println(lll.stream().flatMap(Collection::stream).toList());
 
 
-        System.out.println("//            Removing Null Values: Remove null values from a list of strings.");
+       //            Removing Null Values: Remove null values from a list of strings.");
         List<String> strList1 = new ArrayList<>();
         strList1.add("sreeja");
         strList1.add(null);
@@ -93,19 +99,18 @@ public class App {
         System.out.println(strList1.stream().filter(Objects::nonNull).toList());
 
 
-        System.out.println("//        Count Elements in List: Count the number of elements in a list.");
+        //        Count Elements in List: Count the number of elements in a list.");
         System.out.println(strList1.stream().count());
 
 
 //        Convert List to Set: Convert a list to a set using collectors.
-        System.out.println("  Convert List to Set: Convert a list to a set using collectors");
-
         Set<String> stringSet = new HashSet<>(strList1);
         System.out.println("strset" + stringSet);
 
 
 //        Sum of List Elements: Calculate the sum of elements in a list.
         List<Integer> nums = List.of(1, 2, 3);
+        System.out.println(nums.stream().reduce(0, Integer::sum));
         System.out.println(nums.stream().collect(Collectors.summingInt(i -> i)));
         System.out.println(nums.stream().mapToInt(i -> i).sum());
 
@@ -115,9 +120,6 @@ public class App {
         List<String> stringList2 = List.of("sree", "maniii", "love");
         System.out.println(stringList2.stream().collect(Collectors.groupingBy(String::length)));
 
-
-//        Partitioning Even and Odd Numbers: Partition a list of integers into even and odd numbers.
-        System.out.println("Partitioning Even and Odd Numbers: Partition a list of integers into even and odd numbers.");
 
 
 //        Joining Strings with Delimiter: Join a list of strings with a specific delimiter.
@@ -131,40 +133,32 @@ public class App {
         System.out.println(nums.stream().mapToInt(i -> i).max().getAsInt());
 
 
-//                Mapping Object to Another Object: Map a list of Person objects to a list of their ages.
+
 //        Collect to Unmodifiable List: Collect elements of a stream into an unmodifiable list.
         strList1.stream().toList();
 
 //                Collect to Unmodifiable Map: Collect elements of a stream into an unmodifiable map.
 //                Collect to Immutable Set: Collect elements of a stream into an immutable set.
-//                Collect and Join with Prefix and Suffix: Collect a list of strings, join them with a prefix and suffix.
 
-        System.out.println("Collect and Join with Prefix and Suffix: Collect a list of strings, join them with a prefix and suffix.");
-        List<String> stringList5 = List.of("sree", "maniii");
+
+//                Collect and Join with Prefix and Suffix: Collect a list of strings, join them with a prefix and suffix.
+    List<String> stringList5 = List.of("sree", "maniii");
         System.out.println(stringList5.stream().map(s -> "&" + s + "&").toList());
 
 
-//        Mapping List of Strings to Uppercase: Convert a list of strings to uppercase.
+
 //                Find Most Common Element: Find the most common element in a list.
         System.out.println("Find Most Common Element: Find the most common element in a list.");
         List<Integer> numsList = List.of(1, 2, 3, 1, 2, 1);
-        Map<Integer, Long> occurenceMap = numsList.stream().collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
-        System.out.println(occurenceMap.entrySet().stream().min(Map.Entry.comparingByValue()).map(Map.Entry::getKey).get());
-        System.out.println(occurenceMap);
+        numsList.stream().collect(Collectors.groupingBy(Function.identity(),Collectors.counting()))
+                .entrySet().stream().max(Comparator.comparing(Map.Entry::getValue)).ifPresent(e-> System.out.println(e.getKey()));
 
-
-//        Summarizing Statistics of Numbers: Get statistical information (count, sum, min, max, average) about a list of integers.
-        //------collectors.summerizing int
-
-
-//                Collecting and Summing Double Values: Collect a list of objects and sum their double values.
 
 //        Grouping by Starting Letter: Group a list of strings by their starting letters.
         System.out.println("Grouping by Starting Letter: Group a list of strings by their starting letters.");
         List<String> stringList3 = List.of("mani", "money", "sree");
         System.out.println(stringList3.stream().collect(Collectors.groupingBy(s -> s.charAt(0))));
 
-//                Partitioning into Lists of Prime and Non-Prime Numbers: Partition a list of integers into prime and non-prime numbers.
 //                Collecting and Summarizing Ages: Collect a list of Person objects and summarize their ages.
         System.out.println("Collecting and Summarizing Ages: Collect a list of Person objects and summarize their ages.");
         Person p1 = new Person("sreeja", 22, 450000);
@@ -181,20 +175,13 @@ public class App {
 
         System.out.println(personList.stream().map(Person::getAge).collect(Collectors.summarizingInt(i -> i)));
 
-
-//        Grouping by Length and Counting Occurrences: Group strings by length and count their occurrences.
-//        Custom Collector to Join Strings: Create a custom collector to join a list of strings.
 //        Grouping by Age Range: Group a list of Person objects by different age ranges.
         System.out.println("Grouping by Age Range: Group a list of Person objects by different age ranges.");
         Map<Integer, List<String>> agelist = personList.stream().collect(Collectors.groupingBy(Person::getAge, Collectors.mapping(Person::getName, Collectors.toList())));
         System.out.println(agelist);
 
 
-//        Collect and Group by First Letter: Collect a list of strings and group them by their first letter.
-
-
 //        Custom Collector to Calculate Median: Create a custom collector to calculate the median of a list of numbers.
-
 //         Grouping by Property and Summing Values: Group a list of objects by a property and sum their values.
 //        Partitioning and Counting Elements: Partition a list of strings into two groups and count their occurrences.
         System.out.println(" Partitioning and Counting Elements: Partition a list of strings into two groups and count their occurrences.");
@@ -207,8 +194,14 @@ public class App {
         personList.forEach(p -> p.setName(p.getName() + "EPAM"));
         System.out.println(personList);
 
-//                Combining Collectors: Combine multiple collectors using Collectors.collectingAndThen().
 
+//        Partitioning into Lists of Prime and Non-Prime Numbers: Partition a list of integers into prime and non-prime numbers.
+        //        Custom Collector to Join Strings: Create a custom collector to join a list of strings.
+        System.out.println("====================================================>");
+//        Grouping by Length and Counting Occurrences: Group strings by length and count their occurrences.
+        System.out.println(stringList2.stream().collect(Collectors.groupingBy(String::length)));
+
+//                Combining Collectors: Combine multiple collectors using Collectors.collectingAndThen().
 //                Collecting and Calculating Frequency: Collect a list of strings and calculate the frequency of each string.
 //        Mapping List of Strings to Concatenated String: Map a list of strings to a concatenated string.
 //                Collecting and Summarizing Characters: Collect a list of strings and summarize their characters.
@@ -230,7 +223,16 @@ public class App {
 //                Collecting and Summing Long Values: Collect a list of objects and sum their long values.
 //        Collecting and Filtering Elements: Collect a list of objects and filter based on a condition.
 //                Custom Collector to Join Strings with Prefix and Suffix: Create a custom collector to join a list of strings with a prefix and suffix.
+//            Filtering with Predicate: Use a custom predicate to filter a list of elements.
+//        Creating Infinite Streams: Generate an infinite stream of even numbers.
+//        Finding Median of Numbers: Find the median of a list of numbers.
+//        Check for Divisibility: Check if all elements in a list are divisible by a given number.
+//         Peeking into Stream Elements: Peek into a stream and print elements while performing an operation.
+        //        Summarizing Statistics of Numbers: Get statistical information (count, sum, min, max, average) about a list of integers.
+        //------collectors.summerizing int
 
+
+//                Collecting and Summing Double Values: Collect a list of objects and sum their double values.
 
         System.out.println("//            Trimming Strings: Trim all strings in a list.");
         List<String> strlist = List.of("sree     ", "mani", "lvss");
